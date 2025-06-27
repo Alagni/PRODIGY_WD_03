@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tic-Tac-Toe: Neon Edition</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      color: #fff;
+    }
+
+    h1 {
+      font-size: 3em;
+      text-shadow: 0 0 10px #00f0ff, 0 0 20px #00f0ff;
+      margin-bottom: 20px;
+    }
+
+    #game {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .cell {
+      width: 100px;
+      height: 100px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid #00f0ff;
+      border-radius: 20px;
+      font-size: 2.5em;
+      font-weight: bold;
+      color: #00f0ff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: 0 0 10px #00f0ff33;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .cell:hover {
+      transform: scale(1.1);
+      background: rgba(0, 240, 255, 0.1);
+    }
+
+    #status {
+      font-size: 1.5em;
+      text-shadow: 0 0 5px #fff;
+      margin-bottom: 15px;
+    }
+
+    button {
+      background: #00f0ff;
+      border: none;
+      padding: 12px 25px;
+      font-size: 1em;
+      color: #000;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+      box-shadow: 0 0 15px #00f0ff88, 0 0 25px #00f0ff55 inset;
+    }
+
+    button:hover {
+      background: #0ff;
+      transform: scale(1.05);
+    }
+
+    @media (max-width: 400px) {
+      #game {
+        grid-template-columns: repeat(3, 80px);
+        gap: 10px;
+      }
+
+      .cell {
+        width: 80px;
+        height: 80px;
+        font-size: 2em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Tic-Tac-Toe</h1>
+  <div id="game">
+    <div class="cell" data-index="0"></div>
+    <div class="cell" data-index="1"></div>
+    <div class="cell" data-index="2"></div>
+    <div class="cell" data-index="3"></div>
+    <div class="cell" data-index="4"></div>
+    <div class="cell" data-index="5"></div>
+    <div class="cell" data-index="6"></div>
+    <div class="cell" data-index="7"></div>
+    <div class="cell" data-index="8"></div>
+  </div>
+  <p id="status">Player X's turn</p>
+  <button onclick="restartGame()">Restart Game</button>
+
+  <script>
+    let board = ["", "", "", "", "", "", "", "", ""];
+    let currentPlayer = "X";
+    let gameActive = true;
+
+    const statusDisplay = document.getElementById("status");
+    const cells = document.querySelectorAll(".cell");
+
+    function handleClick(e) {
+      const index = e.target.getAttribute("data-index");
+      if (board[index] !== "" || !gameActive) return;
+
+      board[index] = currentPlayer;
+      e.target.textContent = currentPlayer;
+
+      if (checkWin()) {
+        statusDisplay.textContent = `✨ Player ${currentPlayer} wins! ✨`;
+        gameActive = false;
+        highlightWin();
+      } else if (board.every(cell => cell !== "")) {
+        statusDisplay.textContent = "It's a draw! 🤝";
+        gameActive = false;
+      } else {
+        currentPlayer = currentPlayer === "X" ? "O" : "X";
+        statusDisplay.textContent = `Player ${currentPlayer}'s turn`;
+      }
+    }
+
+    function checkWin() {
+      const winPatterns = [
+        [0,1,2],[3,4,5],[6,7,8],
+        [0,3,6],[1,4,7],[2,5,8],
+        [0,4,8],[2,4,6]
+      ];
+      for (let pattern of winPatterns) {
+        if (pattern.every(i => board[i] === currentPlayer)) {
+          pattern.forEach(i => cells[i].style.background = "rgba(0,255,150,0.4)");
+          return true;
+        }
+      }
+      return false;
+    }
+
+    function restartGame() {
+      board = ["", "", "", "", "", "", "", "", ""];
+      gameActive = true;
+      currentPlayer = "X";
+      statusDisplay.textContent = `Player ${currentPlayer}'s turn`;
+      cells.forEach(cell => {
+        cell.textContent = "";
+        cell.style.background = "rgba(255, 255, 255, 0.05)";
+      });
+    }
+
+    cells.forEach(cell => cell.addEventListener("click", handleClick));
+  </script>
+</body>
+</html>
